@@ -1,0 +1,42 @@
+backend:
+  name: git-gateway
+  branch: developpement
+
+local_backend: true
+
+media_folder: "images"
+public_folder: "images"
+
+collections:
+  - name: "catalogue"
+    label: "Catalogue Matériaux"
+    files:
+      - file: "data/materiaux.json"
+        label: "Gestion du Catalogue"
+        name: "materiaux_data"
+        fields:
+          - name: "categories"
+            label: "Catégories (Tuiles de présentation)"
+            widget: "list"
+            fields:
+              - {label: "Titre", name: "titre", widget: "string"}
+              - {label: "Slug (identifiant URL)", name: "slug", widget: "string", hint: "Ex: pierre-de-taille"}
+              - {label: "Description courte", name: "description", widget: "text"}
+              - {label: "Image principale", name: "image", widget: "image"}
+          - name: "articles"
+            label: "Articles à vendre (Détail catalogue)"
+            widget: "list"
+            fields:
+              - {label: "Titre de l'article", name: "titre", widget: "string"}
+              - label: "Catégorie"
+                name: "categorie"
+                widget: "select"
+                options: 
+                  - {label: "Pierre de taille", value: "pierre-de-taille"}
+                  - {label: "Terres cuites", value: "terres-cuites"}
+                  - {label: "Bois d'ouvrage", value: "bois-douvrage"}
+                  - {label: "Menuiseries anciennes", value: "menuiseries-anciennes"}
+              - {label: "Description détaillée", name: "description", widget: "text"}
+              - {label: "Image", name: "image", widget: "image"}
+              - {label: "Quantité / Dimensions", name: "quantite", widget: "string", default: "Selon arrivages"}
+              - {label: "Prix", name: "prix", widget: "string", hint: "Ex: 45€ / m² ou Sur devis", required: false}
