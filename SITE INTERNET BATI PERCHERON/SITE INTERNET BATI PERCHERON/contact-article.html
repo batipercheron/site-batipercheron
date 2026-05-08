@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demande de renseignement - Bati Percheron</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-logo">
+            <a href="index.html"><img src="assets/logo-horizontal.jpeg" alt="Logo Bati Percheron" class="nav-logo-img"></a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="recrutement.html">Postuler</a></li>
+            <li><a href="contact.html" class="active">Contact</a></li>
+            <li><a href="https://www.instagram.com/batipercheron" target="_blank" class="nav-insta">Nos Réalisations</a></li>
+        </ul>
+        <div class="nav-pnr"><img src="assets/logo-parc-perche.jpg" alt="Logo PNR Perche" class="pnr-logo-img"></div>
+    </nav>
+
+    <main class="container" style="padding: 4rem 0;">
+        <div class="contact-card" style="max-width: 800px; margin: 0 auto;">
+            <h1 class="section-title" style="margin-bottom: 1.5rem;">Demande de renseignement</h1>
+            <div id="article-header" style="text-align: center; margin-bottom: 3rem; display: none;">
+                <span id="article-name-display" style="display: inline-block; padding: 0.5rem 2rem; background: var(--color-secondary); color: white; border-radius: 50px; font-weight: 600; font-size: 1.3rem; box-shadow: var(--shadow-sm); line-height: 1.4;">
+                    <!-- Nom de l'article injecté ici -->
+                </span>
+            </div>
+
+            <form name="contact-article" method="POST" data-netlify="true">
+                <!-- Champ caché pour que l'info apparaisse dans l'email Netlify -->
+                <input type="hidden" name="Objet_de_la_demande" id="hidden-article-nom">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Nom / Prénom *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Numéro de téléphone *</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                </div>
+
+                <div class="form-group" id="address-group" style="margin-bottom: 0.5rem;">
+                    <label for="address">Adresse de livraison <span id="address-required" style="display: none;">*</span></label>
+                    <input type="text" id="address" name="address" placeholder="Rue, Code Postal, Ville">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 2rem; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="delivery-needed" name="delivery_needed" style="width: auto;">
+                    <label for="delivery-needed" style="margin-bottom: 0; font-weight: 600; cursor: pointer;">Je souhaite être livré(e)</label>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">Quantité souhaitée *</label>
+                    <input type="text" id="quantity" name="quantity" required placeholder="Ex: 20 m², 5 pièces...">
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Votre message (facultatif)</label>
+                    <textarea id="message" name="message" rows="5" placeholder="Précisez votre demande..."></textarea>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button type="submit" class="btn-primary">Envoyer la demande</button>
+                    <p style="font-size: 0.85rem; color: #666; margin-top: 1rem;">* Champs obligatoires</p>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 Bati Percheron. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const article = params.get('article');
+            if (article) {
+                document.getElementById('article-header').style.display = 'block';
+                document.getElementById('article-name-display').textContent = article;
+                document.getElementById('hidden-article-nom').value = article;
+            }
+
+            const deliveryCheckbox = document.getElementById('delivery-needed');
+            const addressInput = document.getElementById('address');
+            const addressRequiredMark = document.getElementById('address-required');
+
+            deliveryCheckbox.addEventListener('change', () => {
+                if (deliveryCheckbox.checked) {
+                    addressInput.required = true;
+                    addressRequiredMark.style.display = 'inline';
+                    addressInput.focus();
+                } else {
+                    addressInput.required = false;
+                    addressRequiredMark.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
