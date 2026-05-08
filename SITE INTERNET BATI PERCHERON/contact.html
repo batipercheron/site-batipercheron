@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Bati Percheron</title>
+    <meta name="description" content="Contactez Bati Percheron for votre projet de restauration de l'habitat traditionnel.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-logo">
+            <a href="index.html"><img src="assets/logo-horizontal.jpeg" alt="Logo Bati Percheron" class="nav-logo-img"
+                    onerror="this.style.display='none'; document.getElementById('nav-logo-fallback').style.display='block';"></a>
+            <a href="index.html" id="nav-logo-fallback" class="nav-brand"
+                style="display:none; text-decoration:none;">BATI PERCHERON</a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="recrutement.html">Postuler</a></li>
+            <li><a href="contact.html" class="active">Contact</a></li>
+            <li>
+                <a href="https://www.instagram.com/batipercheron" target="_blank" rel="noopener noreferrer" class="nav-insta">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    Nos Réalisations
+                </a>
+            </li>
+        
+        </ul>
+        <div class="nav-pnr">
+            <img src="assets/logo-parc-perche.jpg" alt="Logo PNR Perche" class="pnr-logo-img">
+        </div>
+                </nav>
+
+    <main>
+        <section class="contact-section" style="min-height: calc(100vh - 150px);">
+            <div class="container">
+                <h2 class="section-title">Contactez-nous</h2>
+                <div class="contact-grid">
+                    <div class="contact-info">
+                        <h3>Échangeons sur votre projet</h3>
+                        <p style="margin-bottom: 1.5rem;">Contactez <strong>Fabrice Mauger</strong> au <a href="tel:0695301525" style="color: var(--color-primary); text-decoration: none; font-weight: bold;">06 95 30 15 25</a><br>
+                        ou utilisez le formulaire ci-dessous pour nous faire part de votre projet.</p>
+                    </div>
+
+                    <div class="contact-form-container">
+                        <form id="contact-form" name="contact" method="POST" data-netlify="true" enctype="multipart/form-data">
+                            <input type="hidden" name="form-name" value="contact">
+                            <div class="form-row">
+                                <div class="input-group">
+                                    <label for="contact-nom">Nom <span class="required">*</span></label>
+                                    <input type="text" id="contact-nom" name="name" required placeholder="Votre nom">
+                                    <span class="error-message" id="error-contact-nom">Ce champ est requis</span>
+                                </div>
+                                <div class="input-group">
+                                    <label for="contact-tel">Téléphone <span class="required">*</span></label>
+                                    <input type="tel" id="contact-tel" name="phone" required placeholder="06 00 00 00 00">
+                                    <span class="error-message" id="error-contact-tel">Requis</span>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="contact-email">Email <span class="required">*</span></label>
+                                <input type="email" id="contact-email" name="email" required placeholder="votre.email@exemple.fr">
+                                <span class="error-message" id="error-contact-email">Une adresse email valide est requise</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="contact-message">Message <span class="required">*</span></label>
+                                <textarea id="contact-message" name="message" rows="4" required placeholder="Décrivez votre projet..."></textarea>
+                                <span class="error-message" id="error-contact-message">Ce champ est requis</span>
+                            </div>
+                            <div class="input-group">
+                                <label for="contact-file">Joindre une photo ou un plan <span class="optional">(Facultatif)</span></label>
+                                <input type="file" id="contact-file" name="attachment" accept="image/*,.pdf" class="file-input">
+                            </div>
+                            
+                            <button type="submit" class="submit-btn" id="contact-submit-btn">
+                                <span>Envoyer mon message</span>
+                                <div class="spinner" id="contact-spinner"></div>
+                            </button>
+
+                            <div class="success-message" id="contact-success-message" style="display: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                <p>Merci ! Votre message a bien été envoyé. Nous vous contacterons très rapidement.</p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+            <footer class="site-footer">
+        <p>&copy; 2026 Bati Percheron. Tous droits réservés.</p>
+        <p class="legal-mentions">EURL BATI PERCHERON - 4 chemin de Soizé, La Livraise, 61340 BERD'HUIS - SIRET : 812 199 719 00012</p>
+    </footer>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

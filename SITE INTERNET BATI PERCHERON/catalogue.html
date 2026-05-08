@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogue Matériaux - Bati Percheron</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <style>
+        .catalogue-header { padding: 3rem 0; background-color: var(--color-bg-light); }
+        .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--color-secondary); text-decoration: none; margin-bottom: 2rem; font-weight: 500; }
+        .back-link:hover { text-decoration: underline; }
+        .cat-title { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--color-primary); margin-bottom: 1rem; }
+        .cat-description { font-size: 1.2rem; color: var(--color-text-light); max-width: 800px; margin-bottom: 3rem; }
+        .articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2.5rem; margin-bottom: 4rem; }
+        .article-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; transition: transform 0.3s ease; }
+        .article-card:hover { transform: translateY(-5px); }
+        .article-img { width: 100%; height: 250px; object-fit: cover; background-color: #f5f5f5; }
+        .article-content { padding: 1.5rem; }
+        .article-content h3 { margin-bottom: 0.75rem; color: var(--color-primary); font-size: 1.4rem; }
+        .article-desc { font-size: 1rem; color: var(--color-text); margin-bottom: 1.5rem; line-height: 1.6; }
+        .article-meta { font-size: 0.9rem; color: var(--color-secondary); font-weight: 600; margin-bottom: 1.5rem; display: block; }
+        .error-box { padding: 2rem; background: #fff5f5; border: 1px solid #feb2b2; border-radius: 8px; color: #c53030; margin: 2rem 0; }
+        .no-articles { text-align: center; padding: 4rem 0; background: #f9f9f9; border-radius: 8px; border: 2px dashed #ddd; }
+        @media (max-width: 768px) { .cat-title { font-size: 2rem; } }
+    </style>
+</head>
+<body>
+    <nav class="main-nav">
+        <div class="nav-logo">
+            <a href="index.html"><img src="assets/logo-horizontal.jpeg" alt="Logo Bati Percheron" class="nav-logo-img"></a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="recrutement.html">Postuler</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="https://www.instagram.com/batipercheron" target="_blank" class="nav-insta">Nos Réalisations</a></li>
+        </ul>
+        <div class="nav-pnr"><img src="assets/logo-parc-perche.jpg" alt="Logo PNR Perche" class="pnr-logo-img"></div>
+    </nav>
+
+    <div class="catalogue-header">
+        <div class="container">
+            <a href="materiaux-anciens.html" class="back-link">← Retour aux matériaux</a>
+            <h1 id="cat-title" class="cat-title">Chargement...</h1>
+            <p id="cat-description" class="cat-description"></p>
+        </div>
+    </div>
+
+    <main class="container" style="padding: 4rem 0;">
+        <div id="articles-container">
+            <div id="status-msg">Chargement des données...</div>
+            <div id="error-msg" class="error-box" style="display: none;"></div>
+            <div id="articles-list" class="articles-grid" style="display: none;"></div>
+            <div id="no-articles" class="no-articles" style="display: none;">
+                <h3>Aucun article disponible pour le moment</h3>
+                <p>N'hésitez pas à nous contacter pour connaître nos derniers arrivages.</p><br>
+                <a href="contact.html" class="btn-primary">Nous contacter</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 Bati Percheron. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        async function loadCatalogue() {
+            const params = new URLSearchParams(window.location.search);
+            const slug = params.get('cat');
+            const status = document.getElementById('status-msg');
+            const error = document.getElementById('error-msg');
+
+            if (!slug) {
+                status.textContent = "Aucune catégorie sélectionnée. Redirection...";
+                setTimeout(() => window.location.href = 'materiaux-anciens.html', 2000);
+                return;
+            }
+
+            // Vérification si on est en local (file://)
+            if (window.location.protocol === 'file:') {
+                error.innerHTML = "<strong>Erreur Sécurité :</strong> Le navigateur bloque le chargement des données en local (file://). <br><br> Pour voir le résultat, vous devez glisser votre dossier sur <strong>Netlify Drop</strong> comme expliqué précédemment.";
+                error.style.display = 'block';
+                status.style.display = 'none';
+                return;
+            }
+
+            try {
+                const response = await fetch('data/materiaux.json');
+                if (!response.ok) throw new Error(`Fichier de données introuvable (${response.status})`);
+                
+                const data = await response.json();
+                const category = data.categories.find(c => c.slug === slug);
+                
+                if (category) {
+                    document.getElementById('cat-title').textContent = category.titre;
+                    document.getElementById('cat-description').textContent = category.description;
+                    document.title = `${category.titre} - Bati Percheron`;
+                }
+
+                const filtered = data.articles ? data.articles.filter(a => a.categorie === slug) : [];
+                status.style.display = 'none';
+
+                if (filtered.length > 0) {
+                    const list = document.getElementById('articles-list');
+                    list.innerHTML = filtered.map(a => `
+                        <div class="article-card">
+                            <img src="${a.image || 'assets/logo.jpg'}" alt="${a.titre}" class="article-img">
+                            <div class="article-content">
+                                <h3>${a.titre}</h3>
+                                <span class="article-meta">${a.quantite || ''} ${a.prix ? ' — ' + a.prix : ''}</span>
+                                <p class="article-desc">${a.description}</p>
+                                <p style="font-size: 0.85rem; color: var(--color-text-light); margin-bottom: 1.5rem; font-style: italic;">
+                                    🚛 Livraison possible sur devis
+                                </p>
+                                <a href="contact-article.html?article=${encodeURIComponent(a.titre)}" class="btn-secondary">Intéressé(e)</a>
+                            </div>
+                        </div>
+                    `).join('');
+                    list.style.display = 'grid';
+                } else {
+                    document.getElementById('no-articles').style.display = 'block';
+                }
+            } catch (err) {
+                error.textContent = "Erreur : " + err.message;
+                error.style.display = 'block';
+                status.style.display = 'none';
+            }
+        }
+        window.addEventListener('DOMContentLoaded', loadCatalogue);
+    </script>
+</body>
+</html>
