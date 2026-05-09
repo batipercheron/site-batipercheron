@@ -49,9 +49,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.classList.add('loading');
                 submitBtn.disabled = true;
 
-                fetch("/", {
+                // On récupère l'action du formulaire (l'URL FormSubmit)
+                const action = form.getAttribute('action');
+
+                fetch(action, {
                     method: "POST",
                     body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
                 })
                 .then(response => {
                     if (response.ok) {
