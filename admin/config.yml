@@ -1,0 +1,20 @@
+backend:
+  name: github
+  repo: batipercheron/site-batipercheron
+  branch: principal
+
+media_folder: "assets/images"
+public_folder: "assets/images"
+
+collections:
+  - name: "materiaux"
+    label: "Catalogue des Matériaux"
+    folder: "content/materiaux"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Nom du Matériau", name: "title", widget: "string"}
+      - {label: "Prix", name: "price", widget: "string"}
+      - {label: "Description", name: "description", widget: "text"}
+      - {label: "Image", name: "image", widget: "image"}
+      - {label: "Catégorie", name: "category", widget: "select", options: ["pierre-de-taille", "terres-cuites", "bois-douvrage", "menuiseries-anciennes"]}

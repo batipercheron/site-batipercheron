@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Postuler - Bati Percheron</title>
+    <meta name="description"
+        content="Rejoignez l'équipe de Bati Percheron. Nous recrutons des passionnés de la restauration traditionnelle.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <header class="main-nav">
+        <a href="index.html" class="nav-brand">
+            <img src="assets/logo-horizontal.jpeg" alt="Bati Percheron" class="nav-logo-img">
+        </a>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="recrutement.html" class="active">Postuler</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li>
+                    <a href="https://www.instagram.com/batipercheron" target="_blank" rel="noopener noreferrer"
+                        class="nav-insta">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                        Nos Réalisations
+                    </a>
+                </li>
+                <li class="nav-pnr">
+                    <img src="assets/logo-parc-perche.jpg" alt="Parc Naturel Régional du Perche" class="pnr-logo-img">
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="contact-section">
+            <div class="container">
+                <h2 class="section-title">Rejoignez notre équipe</h2>
+
+                <div class="contact-grid">
+                    <div class="contact-info">
+                        <h3>Vous êtes passionné par le bâti ancien ?</h3>
+                        <p>Nous recherchons régulièrement des profils motivés pour nos chantiers de restauration.<br>
+                            Laissez-nous vos coordonnées, nous vous recontacterons rapidement.</p>
+                    </div>
+
+                    <form action="https://formsubmit.co/fabrice.mauger@orange.fr" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="_next" value="https://testbatipercheron.netlify.app/recrutement.html">
+                        <input type="hidden" name="_subject" value="Nouvelle candidature - Bati Percheron">
+                        <input type="hidden" name="_captcha" value="false">
+
+                        <div class="form-row">
+                            <div class="input-group">
+                                <label for="recrut-nom">Nom <span class="required">*</span></label>
+                                <input type="text" id="recrut-nom" name="name" required placeholder="Votre nom">
+                            </div>
+                            <div class="input-group">
+                                <label for="recrut-tel">Téléphone <span class="required">*</span></label>
+                                <input type="tel" id="recrut-tel" name="phone" required placeholder="06 00 00 00 00">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="recrut-email">Email <span class="required">*</span></label>
+                            <input type="email" id="recrut-email" name="email" required
+                                placeholder="votre.email@exemple.fr">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="recrut-message">Votre parcours / motivation <span
+                                    class="required">*</span></label>
+                            <textarea id="recrut-message" name="message" rows="5" required
+                                placeholder="Parlez-nous de vous..."></textarea>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="recrut-file">Joindre un CV <span class="optional">(Facultatif)</span></label>
+                            <input type="file" id="recrut-file" name="resume" accept=".pdf,.doc,.docx"
+                                class="file-input">
+                        </div>
+
+                        <button type="submit" class="submit-btn" id="recrutement-submit-btn">
+                            <span>Envoyer ma candidature</span>
+                            <div class="spinner" id="recrutement-spinner"></div>
+                        </button>
+                    </form>
+
+                    <div id="recrutement-success" class="success-message" style="display: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <p>Merci ! Votre candidature a bien été envoyée. Nous vous contacterons très vite.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 Bati Percheron. Tous droits réservés.</p>
+        <p class="legal-mentions">EURL BATI PERCHERON - 4 chemin de Soizé, La Livraise, 61340 BERD'HUIS - SIRET : 812
+            199 719 00012</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
