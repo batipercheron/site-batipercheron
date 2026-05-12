@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogue Matériaux - Bati Percheron</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="main-nav">
+        <a href="index.html" class="nav-brand">
+            <img src="assets/logo-horizontal.jpeg" alt="Bati Percheron" class="nav-logo-img">
+        </a>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="recrutement.html">Postuler</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li>
+                    <a href="https://www.instagram.com/batipercheron" target="_blank" rel="noopener noreferrer" class="nav-insta">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                        Nos Réalisations
+                    </a>
+                </li>
+                <li class="nav-pnr">
+                    <img src="assets/logo-parc-perche.jpg" alt="Parc Naturel Régional du Perche" class="pnr-logo-img">
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-intro-section">
+            <div class="container">
+                <a href="materiaux-anciens.html" class="btn-text" style="display: inline-block; margin-bottom: 1rem;">← Retour aux matériaux</a>
+                <h1 class="section-title">Catalogue des Matériaux</h1>
+                <div id="catalog-container">
+                    <p style="text-align: center; padding: 3rem;">Chargement du catalogue...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 Bati Percheron. Tous droits réservés.</p>
+        <p class="legal-mentions">EURL BATI PERCHERON - 4 chemin de Soizé, La Livraise, 61340 BERD'HUIS - SIRET : 812 199 719 00012</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('catalog-container');
+            const urlParams = new URLSearchParams(window.location.search);
+            const category = urlParams.get('cat');
+            
+            // Simulation de chargement ou message d'attente
+            setTimeout(() => {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                        <h3 style="color: var(--color-primary); margin-bottom: 1rem;">Aucun article disponible pour le moment</h3>
+                        <p>Notre stock évolue quotidiennement. N'hésitez pas à nous contacter directement pour connaître nos derniers arrivages en <strong>${category ? category.replace(/-/g, ' ') : 'matériaux'}</strong>.</p>
+                        <a href="contact.html" class="btn-primary" style="margin-top: 2rem;">Nous contacter</a>
+                    </div>
+                `;
+            }, 500);
+        });
+    </script>
+</body>
+</html>
