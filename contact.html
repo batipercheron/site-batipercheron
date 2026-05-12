@@ -108,11 +108,47 @@
 
     <footer class="site-footer">
         <p>&copy; 2026 Bati Percheron. Tous droits réservés.</p>
-        <p class="legal-mentions">EURL BATI PERCHERON - 4 chemin de Soizé, La Livraise, 61340 BERD'HUIS - SIRET : 812
-            199 719 00012</p>
+        <p class="legal-mentions">EURL BATI PERCHERON - 4 chemin de Soizé, La Livraise, 61340 BERD'HUIS - SIRET : 812 199 719 0002</p>
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const service = urlParams.get('service');
+            
+            let origin = "Site Internet";
+            if (service === 'accompagnement') {
+                origin = "Page Accompagnement";
+            } else if (service === 'visite-conseil') {
+                origin = "Page Visite Conseil";
+            } else if (document.referrer) {
+                try {
+                    const ref = new URL(document.referrer);
+                    const path = ref.pathname.toLowerCase();
+                    if (path.includes('visite-conseil')) origin = "Page Visite Conseil";
+                    else if (path.includes('accompagnement')) origin = "Page Accompagnement";
+                    else if (path.includes('materiaux-anciens')) origin = "Page Matériaux Anciens";
+                    else if (path.includes('recrutement')) origin = "Page Recrutement";
+                    else if (path.includes('index') || path === '/' || path === '') origin = "Page Accueil";
+                    else if (path.includes('catalogue')) origin = "Page Catalogue";
+                    else if (path.includes('blog') || path.includes('article')) origin = "Page Blog";
+                } catch(e) {}
+            }
+
+            const subjectInput = document.querySelector('input[name="_subject"]');
+            if (subjectInput) {
+                subjectInput.value = "Nouveau message de contact (" + origin + ")";
+            }
+
+            if (service === 'accompagnement' || origin === "Page Accompagnement") {
+                const messageArea = document.getElementById('contact-message');
+                if (messageArea && messageArea.value === '') {
+                    messageArea.placeholder = "Précisez votre besoin : sol (ex: tomettes), mur (ex: enduit, rejointoiement), toiture, ou tout autre projet d'auto-rénovation...";
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>
