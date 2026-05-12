@@ -876,12 +876,12 @@ border-radius: 4px;
 #card-couverture::before { background-image: url('images/charpente.jpeg'); }
 #card-terrassement::before { background-image: url('images/terrassement.jpeg'); }
 #card-materiaux::before { background-image: url("images/tomettes%20anciennes.jpeg"); }
-#card-conseil::before { background-image: url('images/accompagnement-fabrice.png'); }
+#card-conseil::before { background-image: url('images/accueil-conseil.png'); }
 #card-realisations::before { background-image: url('images/nos%20r%C3%A9alisations.webp'); }
 
 /* Nouvelles tuiles page Conseil & Accompagnement */
-#card-visite-conseil::before { background-image: url('images/cheminée.jpeg'); }
-#card-accompagnement-coaching::before { background-image: url('images/enduits%20fabrice.jpg'); }
+#card-visite-conseil::before { background-image: url('images/fabrice-diagnostic-carnet.png'); }
+#card-accompagnement-coaching::before { background-image: url('images/accompagnement-tomettes.png'); }
 
 /* Tuiles page Matériaux Anciens */
 #card-mat-pierre::before { background-image: url('images/pierre%20de%20taille.jpeg'); }
