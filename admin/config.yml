@@ -3,25 +3,17 @@ backend:
   repo: batipercheron/site-batipercheron
   branch: main
 
-media_folder: "images"
-public_folder: "images"
+media_folder: "images/materiaux"
+public_folder: "images/materiaux"
 
 collections:
   - name: "catalogue"
     label: "Catalogue des Matériaux"
     files:
-      - label: "Base de données Matériaux"
+      - label: "Gestion des Lots en Vente"
         name: "materiaux"
         file: "data/materiaux.json"
         fields:
-          - label: "Catégories"
-            name: "categories"
-            widget: "list"
-            fields:
-              - {label: "Titre", name: "titre", widget: "string"}
-              - {label: "Slug (identifiant sans espace)", name: "slug", widget: "string"}
-              - {label: "Description", name: "description", widget: "text"}
-              - {label: "Image", name: "image", widget: "image", required: false}
           - label: "Articles en vente"
             name: "articles"
             widget: "list"

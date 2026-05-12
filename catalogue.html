@@ -63,15 +63,37 @@
             fetch('data/materiaux.json')
                 .then(response => response.json())
                 .then(data => {
+                    const fallbackCategories = {
+                        "pierre-de-taille": {
+                            titre: "Pierre de taille",
+                            description: "Blocs de calcaire local et éléments de récupération, parfaits pour les encadrements et aménagements extérieurs."
+                        },
+                        "terres-cuites": {
+                            titre: "Terres cuites",
+                            description: "Tomettes anciennes nettoyées, triées et prêtes à poser. Différents formats carrés, briques et tuiles de pays."
+                        },
+                        "bois-douvrage": {
+                            titre: "Bois d'ouvrage",
+                            description: "Poutres anciennes de récupération et divers bois d'œuvre. Différentes sections disponibles, bois sec et stabilisé."
+                        },
+                        "menuiseries-anciennes": {
+                            titre: "Menuiseries anciennes",
+                            description: "Portes de granges, portes d'entrée en chêne massif et menuiseries intérieures de caractère pour votre demeure."
+                        }
+                    };
+
                     const titleEl = document.querySelector('.section-title');
                     let catTitle = category ? category.replace(/-/g, ' ') : 'Tous nos matériaux';
                     let catDesc = '';
                     
-                    if (category && data.categories) {
-                        const foundCat = data.categories.find(c => c.slug === category);
+                    if (category) {
+                        const foundCat = (data.categories || []).find(c => c.slug === category);
                         if (foundCat) {
                             catTitle = foundCat.titre || catTitle;
                             catDesc = foundCat.description || '';
+                        } else if (fallbackCategories[category]) {
+                            catTitle = fallbackCategories[category].titre;
+                            catDesc = fallbackCategories[category].description;
                         }
                     }
                     
