@@ -116,16 +116,21 @@
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const service = urlParams.get('service');
+            const itemRef = urlParams.get('ref');
             
             let origin = "Site Internet";
-            if (service === 'accompagnement') {
+            if (itemRef) {
+                origin = "Lot : " + itemRef;
+            } else if (service === 'materiaux') {
+                origin = "Catalogue Matériaux";
+            } else if (service === 'accompagnement') {
                 origin = "Page Accompagnement";
             } else if (service === 'visite-conseil') {
                 origin = "Page Visite Conseil";
             } else if (document.referrer) {
                 try {
-                    const ref = new URL(document.referrer);
-                    const path = ref.pathname.toLowerCase();
+                    const refUrl = new URL(document.referrer);
+                    const path = refUrl.pathname.toLowerCase();
                     if (path.includes('visite-conseil')) origin = "Page Visite Conseil";
                     else if (path.includes('accompagnement')) origin = "Page Accompagnement";
                     else if (path.includes('materiaux-anciens')) origin = "Page Matériaux Anciens";
@@ -141,9 +146,11 @@
                 subjectInput.value = "Nouveau message de contact (" + origin + ")";
             }
 
-            if (service === 'accompagnement' || origin === "Page Accompagnement") {
-                const messageArea = document.getElementById('contact-message');
-                if (messageArea && messageArea.value === '') {
+            const messageArea = document.getElementById('contact-message');
+            if (messageArea && messageArea.value === '') {
+                if (itemRef) {
+                    messageArea.value = "Bonjour,\n\nJe souhaite obtenir plus de renseignements (disponibilité, tarif, livraison) concernant le lot suivant :\n- " + itemRef + "\n\nCordialement,";
+                } else if (service === 'accompagnement' || origin === "Page Accompagnement") {
                     messageArea.placeholder = "Précisez votre besoin : sol (ex: tomettes), mur (ex: enduit, rejointoiement), toiture, ou tout autre projet d'auto-rénovation...";
                 }
             }
