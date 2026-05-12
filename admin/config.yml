@@ -3,18 +3,32 @@ backend:
   repo: batipercheron/site-batipercheron
   branch: main
 
-media_folder: "assets/images"
-public_folder: "assets/images"
+media_folder: "images"
+public_folder: "images"
 
 collections:
-  - name: "materiaux"
+  - name: "catalogue"
     label: "Catalogue des Matériaux"
-    folder: "content/materiaux"
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - {label: "Nom du Matériau", name: "title", widget: "string"}
-      - {label: "Prix", name: "price", widget: "string"}
-      - {label: "Description", name: "description", widget: "text"}
-      - {label: "Image", name: "image", widget: "image"}
-      - {label: "Catégorie", name: "category", widget: "select", options: ["pierre-de-taille", "terres-cuites", "bois-douvrage", "menuiseries-anciennes"]}
+    files:
+      - label: "Base de données Matériaux"
+        name: "materiaux"
+        file: "data/materiaux.json"
+        fields:
+          - label: "Catégories"
+            name: "categories"
+            widget: "list"
+            fields:
+              - {label: "Titre", name: "titre", widget: "string"}
+              - {label: "Slug (identifiant sans espace)", name: "slug", widget: "string"}
+              - {label: "Description", name: "description", widget: "text"}
+              - {label: "Image", name: "image", widget: "image", required: false}
+          - label: "Articles en vente"
+            name: "articles"
+            widget: "list"
+            fields:
+              - {label: "Titre de l'article", name: "titre", widget: "string"}
+              - {label: "Catégorie", name: "categorie", widget: "select", options: ["pierre-de-taille", "terres-cuites", "bois-douvrage", "menuiseries-anciennes"]}
+              - {label: "Description", name: "description", widget: "text"}
+              - {label: "Image", name: "image", widget: "image", required: false}
+              - {label: "Quantité", name: "quantite", widget: "string", required: false}
+              - {label: "Prix", name: "prix", widget: "string", default: "Sur devis"}
