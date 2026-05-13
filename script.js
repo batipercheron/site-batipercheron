@@ -95,4 +95,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialisation pour les deux formulaires
     handleFormSubmission('recrutement-form', 'recrutement-submit-btn', 'recrutement-success');
     handleFormSubmission('contact-form', 'contact-submit-btn', 'contact-success');
+
+    // === Gestionnaire du Menu Déroulant tactile / mobile ===
+    const dropdownTrigger = document.querySelector('.dropdown-trigger');
+    const dropdownContent = document.querySelector('.dropdown-content');
+
+    if (dropdownTrigger && dropdownContent) {
+        dropdownTrigger.addEventListener('click', function(e) {
+            e.stopPropagation(); // Évite que le clic ferme immédiatement le menu
+            dropdownContent.classList.toggle('show');
+            const isExpanded = dropdownContent.classList.contains('show');
+            dropdownTrigger.setAttribute('aria-expanded', isExpanded);
+        });
+
+        // Fermer le menu si on clique n'importe où ailleurs sur la page
+        document.addEventListener('click', function(e) {
+            if (!dropdownContent.contains(e.target)) {
+                dropdownContent.classList.remove('show');
+                dropdownTrigger.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
 });
