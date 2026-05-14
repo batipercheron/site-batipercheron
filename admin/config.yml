@@ -17,6 +17,7 @@ collections:
           - label: "Articles en vente"
             name: "articles"
             widget: "list"
+            required: false
             fields:
               - {label: "Titre de l'article", name: "titre", widget: "string"}
               - {label: "Catégorie", name: "categorie", widget: "select", options: ["pierre-de-taille", "terres-cuites", "bois-douvrage", "menuiseries-anciennes"]}
