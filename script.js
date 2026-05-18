@@ -49,13 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.classList.add('loading');
                 submitBtn.disabled = true;
 
-                // On récupère l'action du formulaire (l'URL FormSubmit)
-                let action = form.getAttribute('action');
-                
-                // Pour éviter les erreurs CORS en AJAX, utiliser le point de terminaison /ajax/ de FormSubmit
-                if (action.includes('formsubmit.co') && !action.includes('/ajax/')) {
-                    action = action.replace('formsubmit.co/', 'formsubmit.co/ajax/');
-                }
+                // On récupère l'action du formulaire (l'URL Web3Forms)
+                const action = form.getAttribute('action');
 
                 fetch(action, {
                     method: "POST",
@@ -64,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         'Accept': 'application/json'
                     }
                 })
-                .then(response => {
+                .then(async response => {
                     if (response.ok) {
                         // Masquer le bouton et afficher le message de succès
                         submitBtn.style.display = 'none';
@@ -73,12 +68,17 @@ document.addEventListener('DOMContentLoaded', () => {
                             successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }
                     } else {
-                        throw new Error('Erreur serveur');
+                        let errorMsg = 'Erreur serveur';
+                        try {
+                            const data = await response.json();
+                            if (data.message) errorMsg = data.message;
+                        } catch(e) {}
+                        throw new Error(errorMsg);
                     }
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
-                    alert("Une erreur est survenue lors de l'envoi. Veuillez réessayer ou nous contacter par téléphone.");
+                    alert("Une erreur est survenue : " + error.message + "\nVeuillez réessayer ou nous contacter par téléphone.");
                     submitBtn.classList.remove('loading');
                     submitBtn.disabled = false;
                 });
