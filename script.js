@@ -1,5 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // === Gestionnaire de formulaires générique ===
+﻿document.addEventListener('DOMContentLoaded', () => {
+    // === Gestionnaire de formulaires gÃ©nÃ©rique ===
     const handleFormSubmission = (formId, submitBtnId, successMsgId) => {
         const form = document.getElementById(formId);
         if (!form) return;
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Reset des erreurs
             inputs.forEach(input => {
                 input.classList.remove('invalid');
-                const errorEl = document.getElementById(`error-${input.id}`);
+                const errorEl = document.getElementById( + "error-${input.id}" + );
                 if(errorEl) errorEl.style.display = 'none';
             });
 
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (!fieldValid) {
                     input.classList.add('invalid');
-                    const errorEl = document.getElementById(`error-${input.id}`);
+                    const errorEl = document.getElementById( + "error-${input.id}" + );
                     if(errorEl) errorEl.style.display = 'block';
                     isValid = false;
                 }
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.classList.add('loading');
                 submitBtn.disabled = true;
 
-                // On récupère l'action du formulaire (l'URL Web3Forms)
+                // On rÃ©cupÃ¨re l'action du formulaire (l'URL Web3Forms)
                 const action = form.getAttribute('action');
 
                 fetch(action, {
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
-                    alert("Une erreur est survenue : " + error.message + "\nVeuillez réessayer ou nous contacter par téléphone.");
+                    alert("Une erreur est survenue : " + error.message + "\nVeuillez rÃ©essayer ou nous contacter par tÃ©lÃ©phone.");
                     submitBtn.classList.remove('loading');
                     submitBtn.disabled = false;
                 });
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
             input.addEventListener('input', function() {
                 if (this.classList.contains('invalid')) {
                     this.classList.remove('invalid');
-                    const errorEl = document.getElementById(`error-${this.id}`);
+                    const errorEl = document.getElementById( + "error-${this.id}" + );
                     if(errorEl) errorEl.style.display = 'none';
                 }
             });
@@ -107,19 +107,19 @@ document.addEventListener('DOMContentLoaded', () => {
     handleFormSubmission('recrutement-form', 'recrutement-submit-btn', 'recrutement-success');
     handleFormSubmission('contact-form', 'contact-submit-btn', 'contact-success');
 
-    // === Gestionnaire du Menu Déroulant tactile / mobile ===
+    // === Gestionnaire du Menu DÃ©roulant tactile / mobile ===
     const dropdownTrigger = document.querySelector('.dropdown-trigger');
     const dropdownContent = document.querySelector('.dropdown-content');
 
     if (dropdownTrigger && dropdownContent) {
         dropdownTrigger.addEventListener('click', function(e) {
-            e.stopPropagation(); // Évite que le clic ferme immédiatement le menu
+            e.stopPropagation(); // Ã‰vite que le clic ferme immÃ©diatement le menu
             dropdownContent.classList.toggle('show');
             const isExpanded = dropdownContent.classList.contains('show');
             dropdownTrigger.setAttribute('aria-expanded', isExpanded);
         });
 
-        // Fermer le menu si on clique n'importe où ailleurs sur la page
+        // Fermer le menu si on clique n'importe oÃ¹ ailleurs sur la page
         document.addEventListener('click', function(e) {
             if (!dropdownContent.contains(e.target)) {
                 dropdownContent.classList.remove('show');
@@ -128,20 +128,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // === Bannière de Consentement Cookies (Google Consent Mode v2) ===
+    // === BanniÃ¨re de Consentement Cookies (Google Consent Mode v2) ===
     function initCookieBanner() {
         if (!localStorage.getItem('cookieConsent')) {
-            const bannerHTML = `
+            const bannerHTML = \
                 <div id="site-notice-popup" class="site-notice-bar">
                     <div class="site-notice-content">
-                        <p>🍪 Ce site utilise des cookies pour analyser notre trafic (via Google Analytics / Google Ads) afin d'améliorer votre expérience. Vous pouvez accepter ou refuser ces cookies.</p>
+                        <p>Ce site utilise des cookies pour analyser notre trafic (via Google Analytics / Google Ads) afin d'amÃ©liorer votre expÃ©rience. Vous pouvez accepter ou refuser ces cookies.</p>
                         <div class="site-notice-buttons">
                             <button id="btn-refuse-cookies" class="btn-notice-refuse">Refuser</button>
                             <button id="btn-accept-cookies" class="btn-notice-accept">Accepter</button>
                         </div>
                     </div>
                 </div>
-            `;
+            \;
             document.body.insertAdjacentHTML('beforeend', bannerHTML);
 
             document.getElementById('btn-accept-cookies').addEventListener('click', () => {
