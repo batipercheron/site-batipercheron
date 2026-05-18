@@ -61,11 +61,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                 .then(async response => {
                     if (response.ok) {
-                        // Masquer le bouton et afficher le message de succès
-                        submitBtn.style.display = 'none';
-                        if (successMsg) {
-                            successMsg.style.display = 'flex';
-                            successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Redirect to the appropriate merci page instead of showing success message
+                        if (formId === 'recrutement-form') {
+                            window.location.href = 'merci-recrutement.html';
+                        } else if (formId === 'contact-form') {
+                            window.location.href = 'merci-contact.html';
+                        } else {
+                            submitBtn.style.display = 'none';
+                            if (successMsg) {
+                                successMsg.style.display = 'flex';
+                                successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
                         }
                     } else {
                         let errorMsg = 'Erreur serveur';
@@ -121,4 +127,41 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // === Bannière de Consentement Cookies (Google Consent Mode v2) ===
+    function initCookieBanner() {
+        if (!localStorage.getItem('cookieConsent')) {
+            const bannerHTML = `
+                <div id="cookie-consent-banner" class="cookie-banner">
+                    <div class="cookie-content">
+                        <p>🍪 Ce site utilise des cookies pour analyser notre trafic (via Google Analytics / Google Ads) afin d'améliorer votre expérience. Vous pouvez accepter ou refuser ces cookies.</p>
+                        <div class="cookie-buttons">
+                            <button id="btn-refuse-cookies" class="btn-cookie-refuse">Refuser</button>
+                            <button id="btn-accept-cookies" class="btn-cookie-accept">Accepter</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', bannerHTML);
+
+            document.getElementById('btn-accept-cookies').addEventListener('click', () => {
+                localStorage.setItem('cookieConsent', 'granted');
+                if (typeof gtag === 'function') {
+                    gtag('consent', 'update', {
+                        'ad_storage': 'granted',
+                        'ad_user_data': 'granted',
+                        'ad_personalization': 'granted',
+                        'analytics_storage': 'granted'
+                    });
+                }
+                document.getElementById('cookie-consent-banner').style.display = 'none';
+            });
+
+            document.getElementById('btn-refuse-cookies').addEventListener('click', () => {
+                localStorage.setItem('cookieConsent', 'denied');
+                document.getElementById('cookie-consent-banner').style.display = 'none';
+            });
+        }
+    }
+    initCookieBanner();
 });
