@@ -50,7 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.disabled = true;
 
                 // On récupère l'action du formulaire (l'URL FormSubmit)
-                const action = form.getAttribute('action');
+                let action = form.getAttribute('action');
+                
+                // Pour éviter les erreurs CORS en AJAX, utiliser le point de terminaison /ajax/ de FormSubmit
+                if (action.includes('formsubmit.co') && !action.includes('/ajax/')) {
+                    action = action.replace('formsubmit.co/', 'formsubmit.co/ajax/');
+                }
 
                 fetch(action, {
                     method: "POST",
