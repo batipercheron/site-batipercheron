@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     /* Couleurs inspirÃ©es du logo Bati Percheron */
     --color-primary: #605041; /* Brun foncÃ© */
     --color-secondary: #b09b71; /* Beige/Or */
@@ -1123,7 +1123,7 @@ border-radius: 4px;
 }
 
 .details-content ul li::before {
-    content: '\2713';
+    content: 'âœ“';
     position: absolute;
     left: 0;
     color: var(--color-secondary);
