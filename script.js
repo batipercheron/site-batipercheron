@@ -63,9 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (response.ok) {
                         // Redirect to the appropriate merci page instead of showing success message
                         if (formId === 'recrutement-form') {
-                            window.location.href = 'merci-recrutement.html';
+                            window.location.href = 'https://www.batipercheron.fr/merci-recrutement.html';
                         } else if (formId === 'contact-form') {
-                            window.location.href = 'merci-contact.html';
+                            window.location.href = 'https://www.batipercheron.fr/merci-contact.html';
                         } else {
                             submitBtn.style.display = 'none';
                             if (successMsg) {
