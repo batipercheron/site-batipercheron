@@ -128,40 +128,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // === Bannière de Consentement Cookies (Google Consent Mode v2) ===
-    function initCookieBanner() {
-        if (!localStorage.getItem('cookieConsent')) {
-            const bannerHTML = `
-                <div id="site-notice-popup" class="site-notice-bar">
-                    <div class="site-notice-content">
-                        <p>Ce site utilise des cookies pour analyser notre trafic (via Google Analytics / Google Ads) afin d'améliorer votre expérience. Vous pouvez accepter ou refuser ces cookies.</p>
-                        <div class="site-notice-buttons">
-                            <button id="btn-refuse-cookies" class="btn-notice-refuse">Refuser</button>
-                            <button id="btn-accept-cookies" class="btn-notice-accept">Accepter</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', bannerHTML);
 
-            document.getElementById('btn-accept-cookies').addEventListener('click', () => {
-                localStorage.setItem('cookieConsent', 'granted');
-                if (typeof gtag === 'function') {
-                    gtag('consent', 'update', {
-                        'ad_storage': 'granted',
-                        'ad_user_data': 'granted',
-                        'ad_personalization': 'granted',
-                        'analytics_storage': 'granted'
-                    });
-                }
-                document.getElementById('site-notice-popup').style.display = 'none';
-            });
-
-            document.getElementById('btn-refuse-cookies').addEventListener('click', () => {
-                localStorage.setItem('cookieConsent', 'denied');
-                document.getElementById('site-notice-popup').style.display = 'none';
-            });
-        }
-    }
-    initCookieBanner();
 });
