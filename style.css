@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     /* Couleurs inspirÃ©es du logo Bati Percheron */
     --color-primary: #605041; /* Brun foncÃ© */
     --color-secondary: #b09b71; /* Beige/Or */
@@ -753,6 +753,12 @@ font-size: 0.9rem;
     .nav-logo-img {
         height: 35px;
         width: auto;
+    }
+
+    .dropdown-content {
+        left: -20px;
+        right: auto;
+        min-width: 240px;
     }
 
     .features-grid {
