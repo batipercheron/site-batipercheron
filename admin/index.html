@@ -7,114 +7,54 @@
 </head>
 <body>
   <script>
-    (function() {
-      let currentSveltiaInput = null;
-      const originalClick = HTMLInputElement.prototype.click;
+    // SOLUTION DIRECTE ET 100% FIABLE.
+    // Problème : Android ouvre Google Photos à cause de l'attribut accept="image/*".
+    // Solution : On force discrètement accept="*/*" sur tous les champs d'envoi de fichier Sveltia.
+    // Cela force Android à ouvrir le vrai gestionnaire de fichiers natif,
+    // qui propose naturellement l'Appareil Photo et la Galerie Locale (et non Google Photos).
 
-      // Crée ou récupère le menu personnalisé en utilisant un élément <dialog> natif
-      // Cela permet de garantir qu'il s'affichera par-dessus les autres modales de Sveltia (Top Layer)
-      function ensureModal() {
-          let dialog = document.getElementById('custom-photo-modal');
-          if (!dialog) {
-              dialog = document.createElement('dialog');
-              dialog.id = 'custom-photo-modal';
-              // Styling du dialog natif
-              dialog.style.cssText = 'padding:0; border:none; border-radius:16px; background:transparent; max-width:350px; width:90%; overflow:visible; outline:none; margin:auto;';
-              
-              dialog.innerHTML = `
-                <style>
-                  #custom-photo-modal::backdrop {
-                      background: rgba(0,0,0,0.6);
-                      backdrop-filter: blur(3px);
-                  }
-                </style>
-                <div style="background:white; padding:25px; border-radius:16px; text-align:center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-                  <h3 style="margin-top:0; font-size:20px; color:#111;">Ajouter une photo</h3>
-                  <p style="color:#666; font-size:15px; margin-bottom:25px;">Où se trouve votre image ?</p>
-                  
-                  <button id="btn-camera" style="width:100%; padding:16px; background:#2563eb; color:white; border:none; border-radius:10px; font-size:16px; font-weight:bold; margin-bottom:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;">
-                    <span style="font-size:20px;">📷</span> Prendre une photo
-                  </button>
-                  
-                  <button id="btn-files" style="width:100%; padding:16px; background:#10b981; color:white; border:none; border-radius:10px; font-size:16px; font-weight:bold; margin-bottom:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;">
-                    <span style="font-size:20px;">📁</span> Fichiers locaux
-                  </button>
-                  
-                  <button id="btn-cancel" style="width:100%; padding:12px; background:transparent; color:#6b7280; border:none; border-radius:10px; font-size:15px; font-weight:bold; cursor:pointer;">
-                    Annuler
-                  </button>
-                </div>
-              `;
-              document.body.appendChild(dialog);
-              
-              document.getElementById('btn-camera').addEventListener('click', () => {
-                  if (currentSveltiaInput) {
-                      currentSveltiaInput.setAttribute('capture', 'environment');
-                      currentSveltiaInput.setAttribute('accept', 'image/*');
-                      dialog.close();
-                      currentSveltiaInput.dataset.bypass = "true";
-                      originalClick.apply(currentSveltiaInput);
-                  }
-              });
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.addedNodes) {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.nodeType === 1) { // ELEMENT_NODE
+                        if (node.tagName === 'INPUT' && node.type === 'file') {
+                            node.setAttribute('accept', '*/*');
+                            node.removeAttribute('capture');
+                        } else if (node.querySelectorAll) {
+                            node.querySelectorAll('input[type="file"]').forEach(input => {
+                                input.setAttribute('accept', '*/*');
+                                input.removeAttribute('capture');
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    });
 
-              document.getElementById('btn-files').addEventListener('click', () => {
-                  if (currentSveltiaInput) {
-                      currentSveltiaInput.removeAttribute('capture');
-                      if (/Android/i.test(navigator.userAgent)) {
-                          currentSveltiaInput.setAttribute('accept', '*/*');
-                      } else {
-                          currentSveltiaInput.setAttribute('accept', 'image/*');
-                      }
-                      dialog.close();
-                      currentSveltiaInput.dataset.bypass = "true";
-                      originalClick.apply(currentSveltiaInput);
-                  }
-              });
+    // On observe tout le document dès le début
+    observer.observe(document.documentElement, { childList: true, subtree: true });
 
-              document.getElementById('btn-cancel').addEventListener('click', () => {
-                  dialog.close();
-                  currentSveltiaInput = null;
-              });
-          }
-          return dialog;
-      }
-
-      // 1. Intercepte les appels programmatiques de Sveltia
-      HTMLInputElement.prototype.click = function() {
-          if (this.type === 'file') {
-              if (this.dataset.bypass === "true") {
-                  this.dataset.bypass = "false";
-                  return originalClick.apply(this, arguments);
-              }
-
-              const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || navigator.maxTouchPoints > 0;
-              if (isMobile) {
-                  currentSveltiaInput = this;
-                  const modalEl = ensureModal();
-                  if (!modalEl.open) modalEl.showModal(); // Utilise l'API native Top Layer
-                  return;
-              }
-          }
-          return originalClick.apply(this, arguments);
-      };
-
-      // 2. Intercepte les clics directs (si Sveltia rend l'input transparent)
-      document.addEventListener('click', function(e) {
-          if (e.target && e.target.tagName === 'INPUT' && e.target.type === 'file') {
-              if (e.target.dataset.bypass === "true") {
-                  e.target.dataset.bypass = "false";
-                  return;
-              }
-              const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || navigator.maxTouchPoints > 0;
-              if (isMobile) {
-                  e.preventDefault(); 
-                  currentSveltiaInput = e.target;
-                  const modalEl = ensureModal();
-                  if (!modalEl.open) modalEl.showModal(); // Utilise l'API native Top Layer
-              }
-          }
-      }, true);
-    })();
+    // Sécurité supplémentaire : au moment exact du clic (sur le bouton, le label, ou l'input caché)
+    document.addEventListener('click', function(e) {
+        let target = e.target;
+        while (target && target !== document) {
+            if (target.tagName === 'INPUT' && target.type === 'file') {
+                target.setAttribute('accept', '*/*');
+                target.removeAttribute('capture');
+                break;
+            }
+            if (target.tagName === 'LABEL' && target.htmlFor) {
+                let input = document.getElementById(target.htmlFor);
+                if (input && input.type === 'file') {
+                    input.setAttribute('accept', '*/*');
+                    input.removeAttribute('capture');
+                }
+            }
+            target = target.parentNode;
+        }
+    }, true);
   </script>
   <!-- Sveltia CMS : Alternative moderne à Decap CMS qui fonctionne à 100% sur GitHub sans serveur -->
   <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
