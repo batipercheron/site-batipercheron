@@ -11,16 +11,24 @@
       let currentSveltiaInput = null;
       const originalClick = HTMLInputElement.prototype.click;
 
-      // Crée ou récupère le menu personnalisé.
-      // Créé À LA VOLÉE pour éviter d'être écrasé par Sveltia au chargement.
+      // Crée ou récupère le menu personnalisé en utilisant un élément <dialog> natif
+      // Cela permet de garantir qu'il s'affichera par-dessus les autres modales de Sveltia (Top Layer)
       function ensureModal() {
-          let modal = document.getElementById('custom-photo-modal');
-          if (!modal) {
-              modal = document.createElement('div');
-              modal.id = 'custom-photo-modal';
-              modal.style.cssText = 'display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:2147483647; justify-content:center; align-items:center; font-family:sans-serif; backdrop-filter:blur(3px);';
-              modal.innerHTML = `
-                <div style="background:white; padding:25px; border-radius:16px; width:90%; max-width:350px; text-align:center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+          let dialog = document.getElementById('custom-photo-modal');
+          if (!dialog) {
+              dialog = document.createElement('dialog');
+              dialog.id = 'custom-photo-modal';
+              // Styling du dialog natif
+              dialog.style.cssText = 'padding:0; border:none; border-radius:16px; background:transparent; max-width:350px; width:90%; overflow:visible; outline:none; margin:auto;';
+              
+              dialog.innerHTML = `
+                <style>
+                  #custom-photo-modal::backdrop {
+                      background: rgba(0,0,0,0.6);
+                      backdrop-filter: blur(3px);
+                  }
+                </style>
+                <div style="background:white; padding:25px; border-radius:16px; text-align:center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
                   <h3 style="margin-top:0; font-size:20px; color:#111;">Ajouter une photo</h3>
                   <p style="color:#666; font-size:15px; margin-bottom:25px;">Où se trouve votre image ?</p>
                   
@@ -37,13 +45,13 @@
                   </button>
                 </div>
               `;
-              document.body.appendChild(modal);
+              document.body.appendChild(dialog);
               
               document.getElementById('btn-camera').addEventListener('click', () => {
                   if (currentSveltiaInput) {
                       currentSveltiaInput.setAttribute('capture', 'environment');
                       currentSveltiaInput.setAttribute('accept', 'image/*');
-                      modal.style.display = 'none';
+                      dialog.close();
                       currentSveltiaInput.dataset.bypass = "true";
                       originalClick.apply(currentSveltiaInput);
                   }
@@ -57,18 +65,18 @@
                       } else {
                           currentSveltiaInput.setAttribute('accept', 'image/*');
                       }
-                      modal.style.display = 'none';
+                      dialog.close();
                       currentSveltiaInput.dataset.bypass = "true";
                       originalClick.apply(currentSveltiaInput);
                   }
               });
 
               document.getElementById('btn-cancel').addEventListener('click', () => {
-                  modal.style.display = 'none';
+                  dialog.close();
                   currentSveltiaInput = null;
               });
           }
-          return modal;
+          return dialog;
       }
 
       // 1. Intercepte les appels programmatiques de Sveltia
@@ -83,8 +91,7 @@
               if (isMobile) {
                   currentSveltiaInput = this;
                   const modalEl = ensureModal();
-                  modalEl.style.display = 'flex';
-                  // On bloque l'ouverture pour afficher notre menu à la place
+                  if (!modalEl.open) modalEl.showModal(); // Utilise l'API native Top Layer
                   return;
               }
           }
@@ -100,10 +107,10 @@
               }
               const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || navigator.maxTouchPoints > 0;
               if (isMobile) {
-                  e.preventDefault(); // Bloque l'action native
+                  e.preventDefault(); 
                   currentSveltiaInput = e.target;
                   const modalEl = ensureModal();
-                  modalEl.style.display = 'flex';
+                  if (!modalEl.open) modalEl.showModal(); // Utilise l'API native Top Layer
               }
           }
       }, true);
