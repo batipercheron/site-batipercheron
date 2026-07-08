@@ -7,55 +7,112 @@
 </head>
 <body>
   <script>
-    // Logique pour forcer l'appareil photo ou l'explorateur local
-    function applyCameraLogic(inputElement) {
-        // Détection mobile
-        const isAndroid = /Android/i.test(navigator.userAgent);
-        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-        if (!isAndroid && !isIOS) return;
+    (function() {
+      let currentSveltiaInput = null;
+      const originalClick = HTMLInputElement.prototype.click;
 
-        // Évite de demander en boucle si l'événement se répète
-        if (inputElement.dataset.asked === "true") return;
+      // Crée une belle interface HTML (BottomSheet / Modal) au lieu de window.confirm()
+      // car certains navigateurs mobiles bloquent confirm() quand appelé depuis un script.
+      function initModal() {
+          const modal = document.createElement('div');
+          modal.innerHTML = `
+            <div id="custom-photo-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:2147483647; justify-content:center; align-items:center; font-family:sans-serif; backdrop-filter:blur(3px);">
+              <div style="background:white; padding:25px; border-radius:16px; width:90%; max-width:350px; text-align:center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                <h3 style="margin-top:0; font-size:20px; color:#111;">Ajouter une photo</h3>
+                <p style="color:#666; font-size:15px; margin-bottom:25px;">Où se trouve votre image ?</p>
+                
+                <button id="btn-camera" style="width:100%; padding:16px; background:#2563eb; color:white; border:none; border-radius:10px; font-size:16px; font-weight:bold; margin-bottom:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;">
+                  <span style="font-size:20px;">📷</span> Prendre une photo
+                </button>
+                
+                <button id="btn-files" style="width:100%; padding:16px; background:#10b981; color:white; border:none; border-radius:10px; font-size:16px; font-weight:bold; margin-bottom:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;">
+                  <span style="font-size:20px;">📁</span> Fichiers locaux
+                </button>
+                
+                <button id="btn-cancel" style="width:100%; padding:12px; background:transparent; color:#6b7280; border:none; border-radius:10px; font-size:15px; font-weight:bold; cursor:pointer;">
+                  Annuler
+                </button>
+              </div>
+            </div>
+          `;
+          document.body.appendChild(modal);
+          
+          document.getElementById('btn-camera').addEventListener('click', () => {
+              if (currentSveltiaInput) {
+                  currentSveltiaInput.setAttribute('capture', 'environment');
+                  currentSveltiaInput.setAttribute('accept', 'image/*');
+                  document.getElementById('custom-photo-modal').style.display = 'none';
+                  currentSveltiaInput.dataset.bypass = "true";
+                  
+                  // Le clic vient de l'utilisateur, donc le navigateur autorise l'ouverture
+                  originalClick.apply(currentSveltiaInput);
+              }
+          });
 
-        const useCamera = window.confirm(
-            "📷 SOURCE DE L'IMAGE\n\n" +
-            "Voulez-vous prendre une photo directement avec l'appareil photo ?\n\n" +
-            "👉 [ OK ] pour prendre une Photo\n" +
-            "👉 [ Annuler ] pour un Fichier local"
-        );
+          document.getElementById('btn-files').addEventListener('click', () => {
+              if (currentSveltiaInput) {
+                  currentSveltiaInput.removeAttribute('capture');
+                  if (/Android/i.test(navigator.userAgent)) {
+                      // Astuce pour ouvrir l'explorateur de fichiers au lieu de Google Photos
+                      currentSveltiaInput.setAttribute('accept', '*/*');
+                  } else {
+                      currentSveltiaInput.setAttribute('accept', 'image/*');
+                  }
+                  document.getElementById('custom-photo-modal').style.display = 'none';
+                  currentSveltiaInput.dataset.bypass = "true";
+                  originalClick.apply(currentSveltiaInput);
+              }
+          });
 
-        if (useCamera) {
-            inputElement.setAttribute('capture', 'environment');
-            inputElement.setAttribute('accept', 'image/*');
-        } else {
-            inputElement.removeAttribute('capture');
-            if (isAndroid) {
-                // Force l'explorateur de fichiers au lieu du Photo Picker Google
-                inputElement.setAttribute('accept', '*/*');
-            } else {
-                inputElement.setAttribute('accept', 'image/*');
-            }
-        }
-        // Marque l'input pour ne pas redemander au même clic
-        inputElement.dataset.asked = "true";
-        setTimeout(() => { inputElement.dataset.asked = "false"; }, 1000);
-    }
+          document.getElementById('btn-cancel').addEventListener('click', () => {
+              document.getElementById('custom-photo-modal').style.display = 'none';
+              currentSveltiaInput = null;
+          });
+      }
 
-    // 1. Intercepte si Sveltia appelle input.click() en Javascript (cas le plus probable)
-    const originalClick = HTMLInputElement.prototype.click;
-    HTMLInputElement.prototype.click = function() {
-        if (this.type === 'file') {
-            applyCameraLogic(this);
-        }
-        return originalClick.apply(this, arguments);
-    };
+      if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initModal);
+      } else {
+          initModal();
+      }
 
-    // 2. Intercepte si l'utilisateur clique physiquement sur un input file caché
-    document.addEventListener('click', function(e) {
-        if (e.target && e.target.tagName === 'INPUT' && e.target.type === 'file') {
-            applyCameraLogic(e.target);
-        }
-    }, true); // true = phase de capture (avant que le navigateur ouvre la galerie)
+      // 1. Intercepte les appels programmatiques de Sveltia
+      HTMLInputElement.prototype.click = function() {
+          if (this.type === 'file') {
+              if (this.dataset.bypass === "true") {
+                  this.dataset.bypass = "false";
+                  return originalClick.apply(this, arguments);
+              }
+
+              const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+              if (isMobile) {
+                  currentSveltiaInput = this;
+                  const modalEl = document.getElementById('custom-photo-modal');
+                  if (modalEl) modalEl.style.display = 'flex';
+                  // On bloque l'ouverture pour afficher notre menu à la place
+                  return;
+              }
+          }
+          return originalClick.apply(this, arguments);
+      };
+
+      // 2. Intercepte les clics directs (si Sveltia rend l'input transparent)
+      document.addEventListener('click', function(e) {
+          if (e.target && e.target.tagName === 'INPUT' && e.target.type === 'file') {
+              if (e.target.dataset.bypass === "true") {
+                  e.target.dataset.bypass = "false";
+                  return;
+              }
+              const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+              if (isMobile) {
+                  e.preventDefault(); // Bloque l'action native
+                  currentSveltiaInput = e.target;
+                  const modalEl = document.getElementById('custom-photo-modal');
+                  if (modalEl) modalEl.style.display = 'flex';
+              }
+          }
+      }, true);
+    })();
   </script>
   <!-- Sveltia CMS : Alternative moderne à Decap CMS qui fonctionne à 100% sur GitHub sans serveur -->
   <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
