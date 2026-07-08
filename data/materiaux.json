@@ -1,19 +1,5 @@
 {
-  "articles": [
-    {
-      "titre": "Essai",
-      "categorie": "pierre-de-taille",
-      "description": "Xxx",
-      "image": "/images/materiaux/20260702_115837.jpg",
-      "images_secondaires": [
-        "/images/materiaux/20260630_213014.jpg",
-        "/images/materiaux/20260630_213124.jpg",
-        "/images/materiaux/20260630_213014.jpg"
-      ],
-      "quantite": "4",
-      "prix": "Sur devis"
-    }
-  ],
+  "articles": [],
   "categories": [
     {
       "titre": "Pierre de taille",
