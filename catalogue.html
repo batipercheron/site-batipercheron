@@ -156,28 +156,38 @@
                         let cardsHtml = '';
                         filteredArticles.forEach(article => {
                             let imgPath = article.image;
-                            let imgHtml = `<div class="material-image-placeholder" style="height: 240px; background: #f5f3ef; display: flex; align-items: center; justify-content: center; color: #aaa; font-style: italic;">Photo sur demande</div>`;
+                            
+                            // Rassembler toutes les images (principale + secondaires)
+                            let allImages = [];
                             if (imgPath && imgPath.trim() !== '') {
-                                // Ajustement du chemin si nécessaire
-                                if (!imgPath.startsWith('http') && !imgPath.startsWith('images/') && !imgPath.startsWith('/')) {
-                                    imgPath = 'images/' + imgPath;
-                                }
-                                imgHtml = `<img src="${imgPath}" alt="${article.titre}" style="width: 100%; height: 240px; object-fit: cover; display: block;">`;
+                                let path = imgPath;
+                                if (!path.startsWith('http') && !path.startsWith('images/') && !path.startsWith('/')) path = 'images/' + path;
+                                allImages.push(path);
+                            }
+                            if (article.images_secondaires && article.images_secondaires.length > 0) {
+                                article.images_secondaires.forEach(secImg => {
+                                    if(secImg && secImg.trim() !== '') {
+                                        let secPath = secImg;
+                                        if (!secPath.startsWith('http') && !secPath.startsWith('images/') && !secPath.startsWith('/')) secPath = 'images/' + secPath;
+                                        allImages.push(secPath);
+                                    }
+                                });
+                            }
+                            let galleryJson = encodeURIComponent(JSON.stringify(allImages));
+
+                            let imgHtml = `<div class="material-image-placeholder" style="height: 240px; background: #f5f3ef; display: flex; align-items: center; justify-content: center; color: #aaa; font-style: italic;">Photo sur demande</div>`;
+                            if (allImages.length > 0) {
+                                imgHtml = `<img src="${allImages[0]}" alt="${article.titre}" style="width: 100%; height: 240px; object-fit: cover; display: block; cursor: pointer;" onclick="openLightbox('${galleryJson}', 0)">`;
                             }
 
                             // Ajout de la galerie d'images secondaires
                             let secondaryImagesHtml = '';
-                            if (article.images_secondaires && article.images_secondaires.length > 0) {
+                            if (allImages.length > 1) {
                                 secondaryImagesHtml = '<div style="display: flex; overflow-x: auto; gap: 8px; padding: 8px 12px; background: #fbfbfb; border-bottom: 1px solid #eae5dc;">';
-                                article.images_secondaires.forEach(secImg => {
-                                    if(secImg && secImg.trim() !== '') {
-                                        let secPath = secImg;
-                                        if (!secPath.startsWith('http') && !secPath.startsWith('images/') && !secPath.startsWith('/')) {
-                                            secPath = 'images/' + secPath;
-                                        }
-                                        secondaryImagesHtml += `<a href="${secPath}" target="_blank" style="flex-shrink: 0;"><img src="${secPath}" alt="Vue supplémentaire" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1"></a>`;
-                                    }
-                                });
+                                // Commencer à l'index 1 car la 0 est l'image principale
+                                for (let i = 1; i < allImages.length; i++) {
+                                    secondaryImagesHtml += `<img src="${allImages[i]}" alt="Vue supplémentaire" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1" onclick="openLightbox('${galleryJson}', ${i})">`;
+                                }
                                 secondaryImagesHtml += '</div>';
                             }
 
@@ -209,6 +219,72 @@
                         </div>
                     `;
                 });
+        });
+    </script>
+
+    <!-- Lightbox pour le diaporama des images -->
+    <div id="lightbox" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; align-items: center; justify-content: center; flex-direction: column;">
+        <span id="lb-close" style="position: absolute; top: 20px; right: 30px; color: white; font-size: 45px; cursor: pointer; font-weight: 300; transition: color 0.2s;" onmouseover="this.style.color='#ccc'" onmouseout="this.style.color='white'">&times;</span>
+        <div style="display: flex; align-items: center; justify-content: center; width: 100%; max-width: 1000px; padding: 0 10px; height: 80vh;">
+            <span id="lb-prev" style="color: white; font-size: 60px; cursor: pointer; user-select: none; padding: 20px; flex-shrink: 0; transition: color 0.2s;" onmouseover="this.style.color='#ccc'" onmouseout="this.style.color='white'">&#10094;</span>
+            <img id="lb-img" style="max-width: calc(100% - 140px); max-height: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <span id="lb-next" style="color: white; font-size: 60px; cursor: pointer; user-select: none; padding: 20px; flex-shrink: 0; transition: color 0.2s;" onmouseover="this.style.color='#ccc'" onmouseout="this.style.color='white'">&#10095;</span>
+        </div>
+        <div id="lb-caption" style="color: #ccc; margin-top: 20px; font-size: 1.1rem; font-family: 'Inter', sans-serif;"></div>
+    </div>
+
+    <script>
+        let currentGallery = [];
+        let currentIndex = 0;
+
+        function openLightbox(galleryJson, index) {
+            currentGallery = JSON.parse(decodeURIComponent(galleryJson));
+            currentIndex = index;
+            document.getElementById('lightbox').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Empêche le scroll de la page derrière
+            updateLightbox();
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Réactive le scroll
+        }
+
+        function changeSlide(step) {
+            currentIndex += step;
+            if (currentIndex >= currentGallery.length) currentIndex = 0;
+            if (currentIndex < 0) currentIndex = currentGallery.length - 1;
+            updateLightbox();
+        }
+
+        function updateLightbox() {
+            document.getElementById('lb-img').src = currentGallery[currentIndex];
+            document.getElementById('lb-caption').innerText = `Image ${currentIndex + 1} sur ${currentGallery.length}`;
+            
+            // Cacher les flèches si on n'a qu'une seule image
+            const displayArrows = currentGallery.length > 1 ? 'block' : 'none';
+            document.getElementById('lb-prev').style.display = displayArrows;
+            document.getElementById('lb-next').style.display = displayArrows;
+        }
+
+        document.getElementById('lb-close').addEventListener('click', closeLightbox);
+        document.getElementById('lb-prev').addEventListener('click', (e) => { e.stopPropagation(); changeSlide(-1); });
+        document.getElementById('lb-next').addEventListener('click', (e) => { e.stopPropagation(); changeSlide(1); });
+        
+        // Fermer en cliquant en dehors de l'image
+        document.getElementById('lightbox').addEventListener('click', (e) => {
+            if (e.target.id === 'lightbox' || e.target.id === 'lb-caption') {
+                closeLightbox();
+            }
+        });
+
+        // Navigation au clavier
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('lightbox').style.display === 'flex') {
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowLeft') changeSlide(-1);
+                if (e.key === 'ArrowRight') changeSlide(1);
+            }
         });
     </script>
 </body>
