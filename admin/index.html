@@ -19,12 +19,12 @@
                 mutation.addedNodes.forEach((node) => {
                     if (node.nodeType === 1) { // ELEMENT_NODE
                         if (node.tagName === 'INPUT' && node.type === 'file') {
-                            node.setAttribute('accept', '*/*');
+                            node.setAttribute('accept', '.jpg,.jpeg,.png,.webp,.heic');
                             node.setAttribute('multiple', 'multiple');
                             node.removeAttribute('capture');
                         } else if (node.querySelectorAll) {
                             node.querySelectorAll('input[type="file"]').forEach(input => {
-                                input.setAttribute('accept', '*/*');
+                                input.setAttribute('accept', '.jpg,.jpeg,.png,.webp,.heic');
                                 input.setAttribute('multiple', 'multiple');
                                 input.removeAttribute('capture');
                             });
@@ -43,7 +43,7 @@
         let target = e.target;
         while (target && target !== document) {
             if (target.tagName === 'INPUT' && target.type === 'file') {
-                target.setAttribute('accept', '*/*');
+                target.setAttribute('accept', '.jpg,.jpeg,.png,.webp,.heic');
                 target.setAttribute('multiple', 'multiple');
                 target.removeAttribute('capture');
                 break;
@@ -51,7 +51,7 @@
             if (target.tagName === 'LABEL' && target.htmlFor) {
                 let input = document.getElementById(target.htmlFor);
                 if (input && input.type === 'file') {
-                    input.setAttribute('accept', '*/*');
+                    input.setAttribute('accept', '.jpg,.jpeg,.png,.webp,.heic');
                     input.setAttribute('multiple', 'multiple');
                     input.removeAttribute('capture');
                 }
