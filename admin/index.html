@@ -7,43 +7,55 @@
 </head>
 <body>
   <script>
-    // Surcharge de la méthode click() pour intercepter l'ouverture du sélecteur de fichiers de Sveltia CMS
+    // Logique pour forcer l'appareil photo ou l'explorateur local
+    function applyCameraLogic(inputElement) {
+        // Détection mobile
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if (!isAndroid && !isIOS) return;
+
+        // Évite de demander en boucle si l'événement se répète
+        if (inputElement.dataset.asked === "true") return;
+
+        const useCamera = window.confirm(
+            "📷 SOURCE DE L'IMAGE\n\n" +
+            "Voulez-vous prendre une photo directement avec l'appareil photo ?\n\n" +
+            "👉 [ OK ] pour prendre une Photo\n" +
+            "👉 [ Annuler ] pour un Fichier local"
+        );
+
+        if (useCamera) {
+            inputElement.setAttribute('capture', 'environment');
+            inputElement.setAttribute('accept', 'image/*');
+        } else {
+            inputElement.removeAttribute('capture');
+            if (isAndroid) {
+                // Force l'explorateur de fichiers au lieu du Photo Picker Google
+                inputElement.setAttribute('accept', '*/*');
+            } else {
+                inputElement.setAttribute('accept', 'image/*');
+            }
+        }
+        // Marque l'input pour ne pas redemander au même clic
+        inputElement.dataset.asked = "true";
+        setTimeout(() => { inputElement.dataset.asked = "false"; }, 1000);
+    }
+
+    // 1. Intercepte si Sveltia appelle input.click() en Javascript (cas le plus probable)
     const originalClick = HTMLInputElement.prototype.click;
     HTMLInputElement.prototype.click = function() {
         if (this.type === 'file') {
-            // Détection des mobiles
-            const isAndroid = /Android/i.test(navigator.userAgent);
-            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-            
-            if (isAndroid || isIOS) {
-                // On met une petite pause visuelle pour l'UI avec un confirm natif
-                const useCamera = window.confirm(
-                    "📷 SOURCE DE L'IMAGE\n\n" +
-                    "Voulez-vous prendre une photo directement avec l'appareil photo ?\n\n" +
-                    "👉 [ OK ] pour prendre une Photo\n" +
-                    "👉 [ Annuler ] pour choisir un Fichier local"
-                );
-
-                if (useCamera) {
-                    // Force l'ouverture directe de l'appareil photo arrière
-                    this.setAttribute('capture', 'environment');
-                    this.setAttribute('accept', 'image/*');
-                } else {
-                    // Supprime le mode appareil photo
-                    this.removeAttribute('capture');
-                    // ASTUCE CRUCIALE POUR ANDROID :
-                    // Sur Android 13+, accept="image/*" ouvre le nouveau Photo Picker (qui force souvent Google Photos).
-                    // En mettant accept="*/*", on contourne ce Photo Picker et on ouvre l'explorateur de fichiers local natif !
-                    if (isAndroid) {
-                        this.setAttribute('accept', '*/*');
-                    } else {
-                        this.setAttribute('accept', 'image/*');
-                    }
-                }
-            }
+            applyCameraLogic(this);
         }
         return originalClick.apply(this, arguments);
     };
+
+    // 2. Intercepte si l'utilisateur clique physiquement sur un input file caché
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.tagName === 'INPUT' && e.target.type === 'file') {
+            applyCameraLogic(e.target);
+        }
+    }, true); // true = phase de capture (avant que le navigateur ouvre la galerie)
   </script>
   <!-- Sveltia CMS : Alternative moderne à Decap CMS qui fonctionne à 100% sur GitHub sans serveur -->
   <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
